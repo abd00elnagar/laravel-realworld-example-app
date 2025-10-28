@@ -1,30 +1,11 @@
 <?php
 
-/*
- * This file is part of jwt-auth.
- *
- * (c) Sean Tymon <tymon148@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 return [
-
     /*
     |--------------------------------------------------------------------------
     | JWT Authentication Secret
     |--------------------------------------------------------------------------
-    |
-    | Don't forget to set this in your .env file, as it will be used to sign
-    | your tokens. A helper command is provided for this:
-    | `php artisan jwt:secret`
-    |
-    | Note: This will be used for Symmetric algorithms only (HMAC),
-    | since RSA and ECDSA use a private/public key combo (See below).
-    |
     */
-
     'secret' => env('JWT_SECRET'),
 
     /*
@@ -265,39 +246,9 @@ return [
     */
 
     'providers' => [
-
-        /*
-        |--------------------------------------------------------------------------
-        | JWT Provider
-        |--------------------------------------------------------------------------
-        |
-        | Specify the provider that is used to create and decode the tokens.
-        |
-        */
-
-        'jwt' => Tymon\JWTAuth\Providers\JWT\Lcobucci::class,
-
-        /*
-        |--------------------------------------------------------------------------
-        | Authentication Provider
-        |--------------------------------------------------------------------------
-        |
-        | Specify the provider that is used to authenticate users.
-        |
-        */
-
-        'auth' => Tymon\JWTAuth\Providers\Auth\Illuminate::class,
-
-        /*
-        |--------------------------------------------------------------------------
-        | Storage Provider
-        |--------------------------------------------------------------------------
-        |
-        | Specify the provider that is used to store tokens in the blacklist.
-        |
-        */
-
-        'storage' => Tymon\JWTAuth\Providers\Storage\Illuminate::class,
+        'jwt' => PHPOpenSourceSaver\JWTAuth\Providers\JWT\Lcobucci::class,
+        'auth' => PHPOpenSourceSaver\JWTAuth\Providers\Auth\Illuminate::class,
+        'storage' => PHPOpenSourceSaver\JWTAuth\Providers\Storage\Illuminate::class,
 
     ],
 
