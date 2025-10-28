@@ -18,7 +18,7 @@ class ArticleResource extends JsonResource
             'tagList' => $this->tags->pluck('name'),
             'createdAt' => $this->created_at,
             'updatedAt' => $this->updated_at,
-            'favoritesCount' => (int) $this->users_count,
+            'favoritesCount' => (int) $this->users->count(),
             'favorited' => $this->users->contains(auth()->id()),
             'author' => [
                 'username' => $this->user->username,
