@@ -10,6 +10,7 @@ use App\Http\Requests\Article\UpdateRequest;
 use App\Http\Resources\ArticleCollection;
 use App\Http\Resources\ArticleResource;
 use App\Models\Article;
+use App\Models\ArticleRevision;
 use App\Models\User;
 use App\Services\ArticleService;
 
@@ -52,6 +53,13 @@ class ArticleController extends Controller
 
     public function update(Article $article, UpdateRequest $request): ArticleResource
     {
+        ArticleRevision::create([
+            'article_id' => $article->id,
+            'title' => $article->title,
+            'slug' => $article->slug,
+            'description' => $article->description,
+            'body' => $article->body,
+        ]);
         $article->update($request->validated()['article']);
 
         $this->syncTags($article, $request->validated()['article']['tagList'] ?? []);
