@@ -23,6 +23,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        // Register the ArticleObserver
+        \App\Models\Article::observe(\App\Observers\ArticleObserver::class);
     }
 }

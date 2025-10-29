@@ -40,11 +40,40 @@ class UserController extends Controller
 
     public function login(LoginRequest $request): array
     {
-        if ($token = auth()->attempt($request->validated()['user'])) {
-            return $this->userResponse($token);
+        $credentials = $request->validated()['user'];
+        
+        // Check if any users exist in the database
+        if (User::count() === 0) {
+            return response()->json([
+                'errors' => [
+                    'message' => 'No users found in the database. Please register first.'
+                ]
+            ], Response::HTTP_NOT_FOUND);
         }
 
-        abort(Response::HTTP_FORBIDDEN);
+        // Attempt to authenticate the user
+        if (!$token = auth()->attempt($credentials)) {
+            // Check if user exists but password is wrong
+            $user = User::where('email', $credentials['email'])->first();
+            
+            if ($user) {
+                return response()->json([
+                    'errors' => [
+                        'message' => 'Invalid password. Please try again.'
+                    ]
+                ], Response::HTTP_UNAUTHORIZED);
+            }
+            
+            // User doesn't exist
+            return response()->json([
+                'errors' => [
+                    'message' => 'No account found with this email address.'
+                ]
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        // Authentication successful
+        return $this->userResponse($token);
     }
 
     protected function userResponse(string $jwtToken): array
