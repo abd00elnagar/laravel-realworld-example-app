@@ -1,21 +1,66 @@
-### Laravel RealWorld Example App
+# RealWorld API with Article Revisions
 
-This Laravel app is part of the [RealWorld](https://github.com/gothinkster/realworld) project, implementing the backend API spec with added article revision functionality.
+A simple Laravel 10 API with JWT authentication and article revision history.
 
-## Requirements
-- PHP >= 8.1
-- Composer
-- SQLite (or your preferred database)
+## 🚀 Quick Start
 
-## Installation
-
-1. Clone the repository
+1. **Clone and install**
 ```bash
 git clone https://github.com/abd00elnagar/laravel-realworld-example-app.git
 cd laravel-realworld-example-app
+composer install
+cp .env.example .env
+php artisan key:generate
+php artisan jwt:secret
 ```
 
-2. Install dependencies
+2. **Setup database**
+```bash
+touch database/database.sqlite
+php artisan migrate --seed
+```
+
+3. **Start the server**
+```bash
+php artisan serve
+```
+
+## 🔑 Authentication
+
+Register a new user:
+```bash
+POST /api/users
+{
+  "user": {
+    "username": "testuser",
+    "email": "test@example.com",
+    "password": "password"
+  }
+}
+```
+
+Login:
+```bash
+POST /api/users/login
+{
+  "user": {
+    "email": "test@example.com",
+    "password": "password"
+  }
+}
+```
+
+## 📝 Article Revisions
+
+- View all revisions: `GET /api/articles/{slug}/revisions`
+- Get specific revision: `GET /api/articles/{slug}/revisions/{id}`
+- Revert to revision: `POST /api/articles/{slug}/revisions/{id}/revert`
+
+## 🛠 Requirements
+- PHP 8.1+
+- Composer
+- SQLite (or any database supported by Laravel)
+
 ```bash
 composer install
 ```

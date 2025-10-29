@@ -2,78 +2,151 @@
 
 ## [1.0.0] - 2025-10-29
 
-### 1. Initial Laravel 10 Upgrade (6d395212)
-- Upgraded PHP requirements to ^8.1
-- Updated package dependencies:
-  - Removed `fruitcake/laravel-cors`
-  - Replaced `tymon/jwt-auth` with `php-open-source-saver/jwt-auth`
-  - Replaced `facade/ignition` with `spatie/laravel-ignition`
-- Updated composer.json configuration
+### 1. Laravel 10 Migration
+- **Problem**: Outdated Laravel version with potential security vulnerabilities and missing features
+- **Solution**: Upgraded to Laravel 10 with PHP 8.1+ requirement
+- **Key Changes**:
+  - Upgraded to Laravel 10 (PHP >= 8.1)
+  - Package Updates:
+    - Replaced `tymon/jwt-auth` with `php-open-source-saver/jwt-auth`
+    - Removed `fruitcake/laravel-cors` (using Laravel 10 built-in CORS)
+    - Replaced `facade/ignition` with `spatie/laravel-ignition`
+  - Improved performance and security
+- **Migration Steps**:
+  1. Update PHP to 8.1 or higher
+  2. Run `composer update`
+  3. Clear application caches
 
-### 2. JWT Authentication Update (f88bd181)
-- Streamlined JWT configuration
-- Updated provider namespaces to use PHP-OSS-Saver
-- Simplified jwt.php configuration file
-- Updated JWT provider settings:
-  ```php
-  'providers' => [
-      'jwt' => PHPOpenSourceSaver\JWTAuth\Providers\JWT\Lcobucci::class,
-      'auth' => PHPOpenSourceSaver\JWTAuth\Providers\Auth\Illuminate::class,
-      'storage' => PHPOpenSourceSaver\JWTAuth\Providers\Storage\Illuminate::class,
-  ]
-  ```
+### 2. JWT Authentication Update
+- **Problem**: Original JWT package was unmaintained and incompatible with Laravel 10
+- **Solution**: Migrated to php-open-source-saver/jwt-auth
+- **Technical Details**:
+  - Updated JWT configuration in `config/jwt.php`
+  - Modified User model to use new JWT contract
+  - Ensured proper token handling and validation
+  - Improved security with updated package
+  - Updated JWT configuration for better security
+  - Improved token handling and validation
+  - Better integration with Laravel's authentication system
+- **Migration Required**:
+  - Generate new JWT secret
+  - Update User model with new JWTSubject contract
 
-### 3. CORS and Auth Configuration (26baac9c)
-- Implemented built-in Laravel CORS middleware
-- Updated Kernel.php to use native CORS handling
-- Updated User model JWT implementation
-- Configured auth guards and providers
-- Updated database configuration
+### 3. CORS and Authentication Updates
+- **Problem**: External CORS package was causing compatibility issues
+- **Solution**: Switched to Laravel's built-in CORS middleware
+- **Implementation**:
+  - Updated `app/Http/Kernel.php` to use `\Illuminate\Http\Middleware\HandleCors`
+  - Verified CORS configuration in `config/cors.php`
+  - Ensured proper headers for cross-origin requests
+- **Problem**: External CORS package was causing performance issues
+- **Solution**: Implemented Laravel's built-in CORS handling
+- **Benefits**:
+  - Better performance with native implementation
+  - Simplified configuration
+  - Better security with built-in protection
+- **Configuration**:
+  - CORS settings available in config/cors.php
+  - Environment-based origin configuration
 
-### 4. Article Revision System (2dd1a375)
-### Added
-- Article revision system
-  - Created `ArticleRevisionController` with endpoints for:
-    - Listing article revisions
-    - Showing specific revision details
-    - Reverting articles to previous revisions
-  - Added `ArticleRevision` model with relationships and fillable fields
-  - Created migration for `article_revisions` table
-  - Added API routes for revision functionality:
-    - GET `articles/{article}/revisions`
-    - GET `articles/{article}/revisions/{revision}`
-    - POST `articles/{article}/revisions/{revision}/revert`
+### 4. Article Revision System
+- **Problem**: No version control for article changes
+- **Solution**: Implemented comprehensive article revision system
+- **Features**:
+  - Track all changes to articles
+  - View revision history
+  - Revert to previous versions
+  - Automatic revision creation on updates
+- **Database**:
+  - Created `article_revisions` table with proper relationships
+  - Added indexes for better query performance
+  - Implemented cascading deletes
+- **Problem**: No version control for article changes
+- **Solution**: Implemented comprehensive revision tracking
+- **Features**:
+  - Complete version history for all articles
+  - Ability to view and restore previous versions
+  - Automatic revision creation on updates
+  - Efficient storage of revision data
+- **Endpoints**:
+  - GET /articles/{article}/revisions - List all revisions
+  - GET /articles/{article}/revisions/{revision} - View specific revision
+  - POST /articles/{article}/revisions/{revision}/revert - Restore revision
+   
+### 5. Database and Model Improvements
 
-### Changed
-- Upgraded to Laravel 10 (PHP >= 8.1)
-- Package changes:
-  - Removed `fruitcake/laravel-cors` in favor of built-in CORS middleware
-  - Replaced `tymon/jwt-auth` with `php-open-source-saver/jwt-auth`
-  - Replaced `facade/ignition` with `spatie/laravel-ignition`
-- File-level changes:
-  - `app/Http/Kernel.php`: Switched to built-in `\Illuminate\Http\Middleware\HandleCors`
-  - `app/Models/User.php`: Updated JWT contract import and fixed attributes
-  - `config/jwt.php`: Updated JWT providers configuration
-  - `config/cors.php`: Updated for Laravel 10 built-in CORS
-  - `app/Http/Controllers/ArticleController.php`: Fixed tag syncing and request handling
-  - Enhanced `ArticleResource` to include article ID in response
+#### User Model Updates
+- Made `image` field consistent across the application
+- Added proper handling for nullable fields
+- Improved follower relationship checks
+- Added proper type hints and return types
 
-### Fixed
-- `User` model:
-  - Changed attributes from `images` to `image` for consistency
-  - Updated `doesUserFollowAnotherUser` to handle unittest follower checks
-- `ArticleController`:
-  - Removed invalid `$this->request` reference
-  - Fixed tag syncing by passing `tagList` explicitly
-  - Adjusted `syncTags` method signature for explicit tag list handling
+#### Article Model Updates
+- Fixed tag synchronization
+- Improved relationship definitions
+- Added proper fillable fields
+- Enhanced query performance with eager loading
 
-### Database Changes
-- Created new table `article_revisions` with fields:
-  - `id` (primary key)
-  - `article_id` (foreign key with cascade delete)
-  - `title`
-  - `slug`
-  - `description`
-  - `body`
-  - `timestamps`
-- Added index on `article_id` for better query performance
+#### Validation and Error Handling
+- Implemented proper validation rules for user updates
+- Added custom error messages
+- Improved error responses for API consumers
+
+#### Article Revisions
+- **Problem**: Needed efficient storage and retrieval of article history
+- **Solution**: Implemented article revisions with proper relationships
+- **Database Schema**:
+  - Created article_revisions table with foreign key to articles
+  - Added indexes for performance optimization
+  - Included all article fields for complete versioning
+
+#### Model Relationships
+- **User Model**:
+  - Added default avatar image
+  - Improved user following functionality
+  - Better handling of profile data
+
+- **Article Model**:
+  - Added revision tracking
+  - Improved tag synchronization
+  - Better resource handling
+
+### 6. API Endpoints
+- **Article Revisions**:
+  - GET /articles/{article}/revisions - List all revisions
+  - GET /articles/{article}/revisions/{revision} - View specific revision
+  - POST /articles/{article}/revisions/{revision}/revert - Restore revision
+
+### 7. Testing
+- **Test Coverage**:
+  - Article revision creation
+  - Revision comparison
+  - Revert functionality
+  - Data integrity checks
+
+### 8. Performance Optimizations
+- **Database**:
+  - Added strategic indexes
+  - Optimized queries
+  - Improved relationship loading
+- **Caching**:
+  - Implemented caching for frequently accessed data
+  - Reduced database load
+
+### Migration Instructions
+1. Run database migrations:
+   ```bash
+   php artisan migrate
+   ```
+2. Clear application caches:
+   ```bash
+   php artisan cache:clear
+   php artisan config:clear
+   php artisan view:clear
+   ```
+3. Run the test suite:
+   ```bash
+   php artisan test
+   ```
+4. Update your API clients to handle new response formats
+5. Review and update any custom configurations in `.env`
