@@ -51,27 +51,45 @@ class ArticleRevisionController extends Controller
      * @param int $revisionId
      * @return JsonResponse
      */
-    public function show(Article $article, $revisionId): JsonResponse
+    public function show($articleSlug, $revisionId): JsonResponse
     {
         try {
+            // First find the article by slug
+            $article = Article::where('slug', $articleSlug)->first();
+            
+            if (!$article) {
+                return response()->json([
+                    'error' => 'Article not found'
+                ], 404);
+            }
+            
+            // Then find the revision
             $revision = ArticleRevision::where('id', $revisionId)
                 ->where('article_id', $article->id)
-                ->firstOrFail();
+                ->first();
                 
-            $this->authorize('view', [$revision, $article]);
+            if (!$revision) {
+                return response()->json([
+                    'error' => 'Revision not found or does not belong to this article'
+                ], 404);
+            }
+                
+            $this->authorize('view', $revision);
                 
             return response()->json([
-                'revision' => $revision,
+                'revision' => $revision->load('article')
             ]);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            
+        } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
             return response()->json([
-                'error' => 'Revision not found'
-            ], 404);
+                'error' => 'You are not authorized to view this revision'
+            ], 403);
+            
         } catch (\Exception $e) {
             return response()->json([
                 'error' => 'Failed to fetch revision',
-                'message' => $e->getMessage()
-            ]);
+                'message' => config('app.debug') ? $e->getMessage() : 'An error occurred'
+            ], 500);
         }
     }
 
