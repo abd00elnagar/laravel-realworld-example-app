@@ -16,7 +16,7 @@ class ArticleRevisionPolicy
      */
     public function viewAny(User $user, Article $article): bool
     {
-        // Only the article author can view revisions
+        
         return $user->id === $article->user_id;
     }
 
@@ -27,10 +27,19 @@ class ArticleRevisionPolicy
      * @param  \App\Models\ArticleRevision  $revision
      * @return bool
      */
-    public function view(User $user, ArticleRevision $revision): bool
+    public function view(User $user, $revision): bool
     {
-        // Only the article author can view a specific revision
-        return $user->id === $revision->article->user_id;
+        // If we get an ArticleRevision instance
+        if ($revision instanceof ArticleRevision) {
+            return $user->id === $revision->article->user_id;
+        }
+        
+        // If we get an array with [ArticleRevision, Article]
+        if (is_array($revision) && isset($revision[0]) && $revision[0] instanceof ArticleRevision) {
+            return $user->id === $revision[0]->article->user_id;
+        }
+        
+        return false;
     }
 
     /**

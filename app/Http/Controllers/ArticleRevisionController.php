@@ -23,7 +23,12 @@ class ArticleRevisionController extends Controller
     public function index(Article $article): JsonResponse
     {
         try {
-            $this->authorize('viewAny', [ArticleRevision::class, $article]);
+            // Authorize the action
+            if (!auth()->user() || auth()->user()->id !== $article->user_id) {
+                return response()->json([
+                    'error' => 'You are not authorized to view these revisions'
+                ], 403);
+            }
             
             $revisions = $article->revisions()
                 ->latest('created_at')
@@ -74,7 +79,7 @@ class ArticleRevisionController extends Controller
                 ], 404);
             }
                 
-            $this->authorize('view', $revision);
+            $this->authorize('view', [$revision, $article]);
                 
             return response()->json([
                 'revision' => $revision->load('article')
@@ -105,21 +110,29 @@ class ArticleRevisionController extends Controller
     public function revert(Article $article, $revisionId): JsonResponse
     {
         try {
+            // Authorize the action
+            if (!auth()->user() || auth()->user()->id !== $article->user_id) {
+                return response()->json([
+                    'error' => 'You are not authorized to perform this action'
+                ], 403);
+            }
+            
             // Find the revision
             $revision = ArticleRevision::where('id', $revisionId)
                 ->where('article_id', $article->id)
                 ->firstOrFail();
 
-                $article->update([
-                    'title' => $revision->title,
-                    'slug' => $revision->slug,
-                    'description' => $revision->description,
-                    'body' => $revision->body,
-                ]);
-                return response()->json([
-                    'article' => $article,
-                    'message' => 'Article successfully reverted to the selected revision',
-                ]);
+            $article->update([
+                'title' => $revision->title,
+                'slug' => $revision->slug,
+                'description' => $revision->description,
+                'body' => $revision->body,
+            ]);
+            
+            return response()->json([
+                'article' => $article,
+                'message' => 'Article successfully reverted to the selected revision',
+            ]);
 
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
