@@ -23,9 +23,6 @@
 - **Technical Details**:
   - Updated JWT configuration in `config/jwt.php`
   - Modified User model to use new JWT contract
-  - Ensured proper token handling and validation
-  - Improved security with updated package
-  - Updated JWT configuration for better security
   - Improved token handling and validation
   - Better integration with Laravel's authentication system
 - **Migration Required**:
@@ -33,98 +30,79 @@
   - Update User model with new JWTSubject contract
 
 ### 3. CORS and Authentication Updates
-- **Problem**: External CORS package was causing compatibility issues
-- **Solution**: Switched to Laravel's built-in CORS middleware
+- **Problem**: External CORS package was causing compatibility and performance issues
+- **Solution**: Implemented Laravel's built-in CORS handling
 - **Implementation**:
   - Updated `app/Http/Kernel.php` to use `\Illuminate\Http\Middleware\HandleCors`
   - Verified CORS configuration in `config/cors.php`
-  - Ensured proper headers for cross-origin requests
-- **Problem**: External CORS package was causing performance issues
-- **Solution**: Implemented Laravel's built-in CORS handling
+  - Environment-based origin configuration
 - **Benefits**:
   - Better performance with native implementation
   - Simplified configuration
-  - Better security with built-in protection
-- **Configuration**:
-  - CORS settings available in config/cors.php
-  - Environment-based origin configuration
+  - Improved security with built-in protection
 
-### 4. Article Revision System
-- **Problem**: No version control for article changes
-- **Solution**: Implemented comprehensive article revision system
-- **Features**:
-  - Track all changes to articles
-  - View revision history
-  - Revert to previous versions
-  - Automatic revision creation on updates
-- **Database**:
-  - Created `article_revisions` table with proper relationships
-  - Added indexes for better query performance
-  - Implemented cascading deletes
-- **Problem**: No version control for article changes
-- **Solution**: Implemented comprehensive revision tracking
-- **Features**:
-  - Complete version history for all articles
-  - Ability to view and restore previous versions
-  - Automatic revision creation on updates
-  - Efficient storage of revision data
-- **Endpoints**:
-  - GET /articles/{article}/revisions - List all revisions
-  - GET /articles/{article}/revisions/{revision} - View specific revision
-  - POST /articles/{article}/revisions/{revision}/revert - Restore revision
-   
-### 5. Database and Model Improvements
+### 4. Database and Model Improvements
 
 #### User Model Updates
 - Made `image` field consistent across the application
 - Added proper handling for nullable fields
 - Improved follower relationship checks
 - Added proper type hints and return types
+- Better handling of profile data
 
 #### Article Model Updates
-- Fixed tag synchronization
 - Improved relationship definitions
 - Added proper fillable fields
-- Enhanced query performance with eager loading
+- Added revision tracking
+- Better resource handling
 
-#### Validation and Error Handling
-- Implemented proper validation rules for user updates
-- Added custom error messages
-- Improved error responses for API consumers
+### 5. Article Revision System
+- **Problem**: No version control for article changes
+- **Solution**: Implemented article revision system with automatic versioning using observers "ArticleObserver"
 
-#### Article Revisions
-- **Problem**: Needed efficient storage and retrieval of article history
-- **Solution**: Implemented article revisions with proper relationships
-- **Database Schema**:
-  - Created article_revisions table with foreign key to articles
-  - Added indexes for performance optimization
+#### Features
+- Complete version history for all articles
+- Track changes to title, slug, description, and body
+- View and restore previous versions
+- Automatic revision creation on updates
+- Only creates revisions when relevant fields change
+- Policy-based authorization for revision access
+
+#### Implementation
+- **Database**:
+  - Created `article_revisions` table with proper relationships
+  - Added indexes for better query performance
   - Included all article fields for complete versioning
+  - Implemented cascading deletes
 
-#### Model Relationships
-- **User Model**:
-  - Added default avatar image
-  - Improved user following functionality
-  - Better handling of profile data
+- **ArticleObserver**:
+  - Automatically creates revisions before article updates
+  - Maintains data integrity with proper relationships
 
-- **Article Model**:
-  - Added revision tracking
-  - Improved tag synchronization
-  - Better resource handling
+- **API Endpoints**:
+  - `GET /api/articles/{slug}/revisions` - List all revisions
+  - `GET /api/articles/{slug}/revisions/{revisionId}` - View specific revision
+  - `POST /api/articles/{slug}/revisions/{revisionId}/revert` - Revert to revision
 
-### 6. API Endpoints
-- **Article Revisions**:
-  - GET /articles/{article}/revisions - List all revisions
-  - GET /articles/{article}/revisions/{revision} - View specific revision
-  - POST /articles/{article}/revisions/{revision}/revert - Restore revision
+- **Security**:
+  - Only article authors can view and revert revisions
+  - Proper validation of all input parameters
+  - Policy-based authorization for revision access
 
-### 7. Testing
+- **Performance**:
+  - Efficient querying with proper indexing
+  - Lazy loading of revision data
+  - Optimized database operations
+
+### 6. Testing
 - **Test Coverage**:
   - Article revision creation
   - Revision comparison
   - Revert functionality
   - Data integrity checks
+  - Authorization and validation
 
-### 8. Performance Optimizations
+### 7. Performance Optimizations
 - **Database**:
   - Added strategic indexes
   - Optimized queries
