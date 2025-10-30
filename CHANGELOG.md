@@ -1,6 +1,5 @@
 # Changelog
 
-## [Unreleased] - 2025-10-30
 
 ### Authorization & Testing Improvements
 - **Problem**: Inconsistent authorization for article revisions and missing test coverage
@@ -14,11 +13,7 @@
   - Proper 401/403 responses for unauthorized access
   - Improved error handling and validation
 
-## [1.0.0] - 2025-10-29
-
-## [1.0.0] - 2025-10-29
-
-### 1. Laravel 10 Migration
+### Laravel 10 Migration
 - **Problem**: Outdated Laravel version with potential security vulnerabilities and missing features
 - **Solution**: Upgraded to Laravel 10 with PHP 8.1+ requirement
 - **Key Changes**:
@@ -33,7 +28,7 @@
   2. Run `composer update`
   3. Clear application caches
 
-### 2. JWT Authentication Update
+### JWT Authentication Update
 - **Problem**: Original JWT package was unmaintained and incompatible with Laravel 10
 - **Solution**: Migrated to php-open-source-saver/jwt-auth
 - **Technical Details**:
@@ -45,7 +40,7 @@
   - Generate new JWT secret
   - Update User model with new JWTSubject contract
 
-### 3. CORS and Authentication Updates
+### CORS and Authentication Updates
 - **Problem**: External CORS package was causing compatibility and performance issues
 - **Solution**: Implemented Laravel's built-in CORS handling
 - **Implementation**:
@@ -57,7 +52,7 @@
   - Simplified configuration
   - Improved security with built-in protection
 
-### 4. Database and Model Improvements
+### Database and Model Improvements
 
 #### User Model Updates
 - Made `image` field consistent across the application
@@ -72,7 +67,7 @@
 - Added revision tracking
 - Better resource handling
 
-### 5. Article Revision System
+### Article Revision System
 - **Problem**: No version control for article changes
 - **Solution**: Implemented article revision system with automatic versioning using observers "ArticleObserver"
 
@@ -110,7 +105,7 @@
   - Lazy loading of revision data
   - Optimized database operations
 
-### 6. Testing
+### Testing
 - **Test Coverage**:
   - Article revision creation
   - Revision comparison
@@ -118,7 +113,7 @@
   - Data integrity checks
   - Authorization and validation
 
-### 7. Performance Optimizations
+### Performance Optimizations
 - **Database**:
   - Added strategic indexes
   - Optimized queries
