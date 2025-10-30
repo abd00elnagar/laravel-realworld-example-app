@@ -1,5 +1,21 @@
 # Changelog
 
+## [Unreleased] - 2025-10-30
+
+### Authorization & Testing Improvements
+- **Problem**: Inconsistent authorization for article revisions and missing test coverage
+- **Solution**: Implemented proper authorization and comprehensive test coverage
+- **Key Changes**:
+  - Added strict authorization checks in `ArticleRevisionController`
+  - Updated `ArticleRevisionPolicy` for consistent permission handling
+  - Implemented comprehensive test cases in `ArticleRevisionTest`
+- **Security**:
+  - Only article authors can view, create, or revert revisions
+  - Proper 401/403 responses for unauthorized access
+  - Improved error handling and validation
+
+## [1.0.0] - 2025-10-29
+
 ## [1.0.0] - 2025-10-29
 
 ### 1. Laravel 10 Migration

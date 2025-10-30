@@ -25,6 +25,24 @@ php artisan migrate --seed
 php artisan serve
 ```
 
+## 🧪 Testing
+
+Run the test suite:
+```bash
+php artisan test
+```
+
+To run a specific test file (e.g., ArticleRevisionTest):
+```bash
+php artisan test tests/Feature/ArticleRevisionTest.php
+```
+
+### Test Coverage
+
+- **Article Revisions**: Tests for creating, viewing, and reverting article revisions
+- **Authorization**: Ensures only article authors can manage their revisions
+- **Edge Cases**: Handles unauthorized access and non-existent resources
+
 ## 🔑 Authentication
 
 Register a new user:
