@@ -98,28 +98,36 @@ class ArticleRevisionController extends Controller
     /**
      * Revert an article to a specific revision
      *
-     * @param Article $article
+     * @param string $articleSlug
      * @param int $revisionId
      * @return JsonResponse
      */
-    public function revert(Article $article, $revisionId): JsonResponse
+    public function revert($articleSlug, $revisionId): JsonResponse
     {
         try {
+            // Find the article by slug
+            $article = Article::where('slug', $articleSlug)->firstOrFail();
+            
+            // Authorize the action
+            $this->authorize('revert', $article);
+            
             // Find the revision
             $revision = ArticleRevision::where('id', $revisionId)
                 ->where('article_id', $article->id)
                 ->firstOrFail();
 
-                $article->update([
-                    'title' => $revision->title,
-                    'slug' => $revision->slug,
-                    'description' => $revision->description,
-                    'body' => $revision->body,
-                ]);
-                return response()->json([
-                    'article' => $article,
-                    'message' => 'Article successfully reverted to the selected revision',
-                ]);
+            // Update the article with revision data
+            $article->update([
+                'title' => $revision->title,
+                'slug' => $revision->slug,
+                'description' => $revision->description,
+                'body' => $revision->body,
+            ]);
+            
+            return response()->json([
+                'article' => $article,
+                'message' => 'Article successfully reverted to the selected revision',
+            ]);
 
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([

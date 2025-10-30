@@ -14,10 +14,10 @@ class ArticleRevisionPolicy
     /**
      * Determine whether the user can view any models.
      */
-    public function viewAny(User $user, Article $article): bool
+    public function viewAny(?User $user, Article $article): bool
     {
-        // Only the article author can view revisions
-        return $user->id === $article->user_id;
+        // Anyone can view article revisions
+        return true;
     }
 
     /**
@@ -27,18 +27,22 @@ class ArticleRevisionPolicy
      * @param  \App\Models\ArticleRevision  $revision
      * @return bool
      */
-    public function view(User $user, ArticleRevision $revision): bool
+    public function view(?User $user, ArticleRevision $revision): bool
     {
-        // Only the article author can view a specific revision
-        return $user->id === $revision->article->user_id;
+        // Anyone can view a specific revision
+        return true;
     }
 
     /**
      * Determine whether the user can revert to a revision.
+     * 
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\ArticleRevision  $revision
+     * @return bool
      */
-    public function revert(User $user, Article $article): bool
+    public function revert(User $user, ArticleRevision $revision): bool
     {
         // Only the article author can revert to a previous revision
-        return $user->id === $article->user_id;
+        return $user->id === $revision->article->user_id;
     }
 }
