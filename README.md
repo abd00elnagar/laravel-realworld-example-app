@@ -15,6 +15,7 @@ php artisan jwt:secret
 ```
 
 2. **Setup database**
+> make sure you COPIED the .env.example file to .env
 ```bash
 touch database/database.sqlite
 php artisan migrate --seed
